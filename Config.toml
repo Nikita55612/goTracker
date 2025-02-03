@@ -1,7 +1,8 @@
 [app]
 port = 4007
+default_save_path = 'C:\Users\Nikita\Downloads'
 
 [tracker]
 base_url = "https://rutracker.org"
 proxy_url = "https://ps1.blockme.site:443"
-bb_session = "0-52335687-cqygg3U3HlXLVNkKPD6R"
+bb_session = "0-52836456-007lgZtE9zHpwtMG67ya"

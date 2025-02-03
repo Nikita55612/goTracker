@@ -1,7 +1,6 @@
 package tracker
 
 import (
-	"fmt"
 	"gotracker/config"
 	"io"
 	"net/http"
@@ -9,6 +8,7 @@ import (
 	"net/url"
 	"strconv"
 	"sync"
+	"time"
 
 	"golang.org/x/net/html"
 	"golang.org/x/text/encoding/charmap"
@@ -31,7 +31,8 @@ func ReqClient() *http.Client {
 			Transport: &http.Transport{
 				Proxy: http.ProxyURL(proxyUrl),
 			},
-			Jar: jar,
+			Jar:     jar,
+			Timeout: 30 * time.Second,
 		}
 
 		cookie := &http.Cookie{
@@ -64,6 +65,8 @@ func SearchQuery(q string, page int) (*SearchResult, error) {
 	}.Encode()
 	reqURL := BaseUrl() + "/forum/tracker.php" + "?" + params
 	req, _ := http.NewRequest("POST", reqURL, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := ReqClient().Do(req)
 	if err != nil {
 		return nil, err
@@ -104,13 +107,11 @@ func TrackerReq(p *TrackerReqParam) (trackerResp *BencodeTrackerResp, err error)
 	if err != nil {
 		return
 	}
-	req.Header.Add("User-Agent", "uTorrent/2210(25110)")
-	fmt.Println("...resp")
+	req.Header.Add("User-Agent", "qBittorrent/5.0.1")
 	resp, err := client.Do(req)
 	if err != nil {
 		return
 	}
-	fmt.Println("resp...")
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {

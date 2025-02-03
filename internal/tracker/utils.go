@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,6 +21,16 @@ var (
 
 type PeerId [20]byte
 
+func HashesFromPieces(p []byte) PieceHashes {
+	hashes := make([][20]byte, 0, len(p)/20)
+	for c := range slices.Chunk(p, 20) {
+		hash := [20]byte{}
+		copy(hash[:], c)
+		hashes = append(hashes, hash)
+	}
+	return hashes
+}
+
 // Поиск атрибута
 func FindAttr(attrs []html.Attribute, k string) *string {
 	for _, a := range attrs {
@@ -35,7 +46,7 @@ func GenPeerId() PeerId {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
 	peerId := PeerId{}
-	prefix := []byte("-UT2210-")
+	prefix := []byte("-qB5001-")
 	copy(peerId[:8], prefix)
 	for i := 8; i < 20; i++ {
 		peerId[i] = charset[seededRand.Intn(len(charset))]

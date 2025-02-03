@@ -12,6 +12,8 @@ type Files []BencodeFile
 
 type InfoHash [20]byte
 
+type PieceHashes [][20]byte
+
 type rawInfo struct {
 	Info map[string]any `bencode:"info"`
 }
@@ -28,7 +30,7 @@ type BencodeTorrent struct {
 type BencodeInfo struct {
 	Name        string `bencode:"name"`
 	PieceLength int    `bencode:"piece length"`
-	Pieces      []byte
+	PieceHashes PieceHashes
 	Length      int   `bencode:"length"`
 	Files       Files `bencode:"files"`
 }
@@ -63,7 +65,7 @@ func TorrentFromFile(f []byte) (*BencodeTorrent, error) {
 	}
 	torrent := new(BencodeTorrent)
 	torrent.InfoHash = sha1.Sum(encodeInfo)
-	torrent.Info.Pieces = []byte(pieces)
+	torrent.Info.PieceHashes = HashesFromPieces([]byte(pieces))
 	if err := bencode.DecodeBytes(f, torrent); err != nil {
 		return nil, err
 	}

@@ -42,12 +42,13 @@ func Get() *Config {
 }
 
 type Config struct {
-	App     App
+	App     App     `toml:"app"`
 	Tracker Tracker `toml:"tracker"`
 }
 
 type App struct {
-	Port uint16
+	Port            uint16 `toml:"port"`
+	DefaultSavePath string `toml:"default_save_path"`
 }
 
 type Tracker struct {
